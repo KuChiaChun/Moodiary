@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--<Button-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:text="@string/login"-->
+        <!--android:id="@+id/login"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+    <!--<Button-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_below="@id/login"-->
+    <!--android:text="@string/signup"-->
+    <!--android:id="@+id/sign_up"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/singoutButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignStart="@+id/memo"-->
+        <!--android:layout_alignTop="@+id/chatbutton"-->
+        <!--android:text="@string/logout" />-->
+
+
+
+    <Button
+        android:id="@+id/fuck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="70dp"
+        android:background="@drawable/diary_btn_shape"
+        android:shadowColor="#7568A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="7"
+        android:text="寫日記"
+        android:textColor="#f5f6f6"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/memo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/fuck"
+        android:layout_marginEnd="58dp"
+        android:background="@drawable/memo_btn_shape"
+        android:shadowColor="#7568A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="7"
+        android:text="@string/memo"
+        android:textColor="#f5f6f6"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/chatbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/fuck"
+        android:layout_marginBottom="130dp"
+        android:background="@drawable/chat_btn_shape"
+        android:shadowColor="#7568A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="7"
+        android:text="聊天室"
+        android:textColor="#f5f6f6"
+        android:textSize="22sp" />
+
+
+    <Button
+        android:id="@+id/entermood"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/memo"
+        android:layout_alignTop="@+id/chatbutton"
+        android:text="心情統計"
+        android:background="@drawable/game_btn_shape"
+        android:shadowColor="#7568A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="7"
+        android:textColor="#f5f6f6"
+        android:textSize="22sp" />
+    <!--<com.google.android.gms.common.SignInButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/googleSignIn"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="156dp">-->
+
+    <!--</com.google.android.gms.common.SignInButton>-->
+
+
+
+</RelativeLayout>
