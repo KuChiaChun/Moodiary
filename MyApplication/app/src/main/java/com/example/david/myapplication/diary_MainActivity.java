@@ -189,7 +189,7 @@ public class diary_MainActivity extends BaseActivity {
         if (cursor.moveToFirst()) {
             do {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
-                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
                 Date datestring =sdf.parse(date);
                 date = sdf2.format(datestring);
@@ -208,7 +208,7 @@ public class diary_MainActivity extends BaseActivity {
         if (cursor.moveToFirst()) {
             do {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
-                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
                 Date datestring =sdf.parse(date);
                 date = sdf2.format(datestring);
