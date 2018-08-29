@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.lizehao.watermelondiarynew.utils.AppManager;
 //import com.lizehao.watermelondiarynew.utils.GetDate;
@@ -138,7 +139,7 @@ public class AddDiaryActivity extends AppCompatActivity {
             }
         });
         //
-        AppManager.getAppManager().addActivity(this);
+//        AppManager.getAppManager().addActivity(this);
         ButterKnife.bind(this);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -212,7 +213,11 @@ public class AddDiaryActivity extends AppCompatActivity {
                 String mood = moodtext;
                 String content = mAddDiaryEtContent.getText().toString() + "";
                 String bmp1 = addbmp;
-                if (!title.equals("") || !content.equals("")) {
+                if(title.equals("")) {
+                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else if (!title.equals("") || !content.equals("")) {
                     SQLiteDatabase db = mHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
 
@@ -228,9 +233,22 @@ public class AddDiaryActivity extends AppCompatActivity {
                     values.put("bmp1", bmp1);
 
                     db.insert("Diary", null, values);
-
+                    diary_MainActivity.startActivity(this);
                 }
-                diary_MainActivity.startActivity(this);
+
+
+                else if(title.equals("") && content.equals("")) {
+                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題及內容不能是空白!!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+//                else if(title.equals("")) {
+//                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
+//                    toast.show();
+//                }
+                else if(content.equals("")) {
+                    Toast toast = Toast.makeText(AddDiaryActivity.this, "內容不能是空白!!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
                 break;
             case R.id.add_diary_fab_add:
                 sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");

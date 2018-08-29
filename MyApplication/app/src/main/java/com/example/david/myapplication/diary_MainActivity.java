@@ -111,7 +111,7 @@ public class diary_MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
-        AppManager.getAppManager().addActivity(this);
+//        AppManager.getAppManager().addActivity(this);
         getWindow().setBackgroundDrawableResource(R.drawable.background_5);
         ButterKnife.bind(this);
         StatusBarCompat.compat(this, Color.parseColor("#161414"));
