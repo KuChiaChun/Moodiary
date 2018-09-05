@@ -101,7 +101,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
             }
         });
         //
-        AppManager.getAppManager().addActivity(this);
+//        AppManager.getAppManager().addActivity(this);
         ButterKnife.bind(this);
         mHelper = new DiaryDatabaseHelper(this, "Diary.db", null, 1);
         initTitle();

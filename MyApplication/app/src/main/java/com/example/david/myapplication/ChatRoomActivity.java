@@ -42,7 +42,7 @@ public class ChatRoomActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatroom);
+        setContentView(R.layout.activity_exchange);
 
         chatRoomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
         messagesReference = mFirebaseDatabaseReference.child(Room.CHILD_NAME).child(chatRoomId).child(Message.CHILD_NAME);

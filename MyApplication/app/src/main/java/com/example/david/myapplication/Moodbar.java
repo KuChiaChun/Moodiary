@@ -1,10 +1,13 @@
 package com.example.david.myapplication;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
 import android.database.sqlite.SQLiteDatabase;
+import android.view.KeyEvent;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -92,7 +95,14 @@ private int DATA_COUNT=5;
 
         return chartLabels;
     }
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Intent intent = new Intent();
+        intent.setClass(Moodbar.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+        return true;
+    }
 
 
 

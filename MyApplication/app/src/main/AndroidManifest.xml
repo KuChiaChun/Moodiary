@@ -33,9 +33,11 @@
         </activity>
         <activity android:name=".chat_MainActivity"/>
         <activity android:name=".Edit"></activity>
+        <activity android:name=".AccountActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".Moodbar" />
+        <activity android:name=".ExchangeDiary" />
         <activity android:name=".ChatRoomActivity" />
         <activity android:name=".UpdateDiaryActivity"
             android:theme="@style/AppTheme2"/>

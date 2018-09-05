@@ -217,6 +217,18 @@ public class AddDiaryActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
                     toast.show();
                 }
+//                else if(title.equals("") && content.equals("")) {
+//                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題及內容不能是空白!!", Toast.LENGTH_LONG);
+//                    toast.show();
+//                }
+//                else if(title.equals("")) {
+//                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
+//                    toast.show();
+//                }
+                else if(content.equals("")) {
+                    Toast toast = Toast.makeText(AddDiaryActivity.this, "內容不能是空白!!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
                 else if (!title.equals("") || !content.equals("")) {
                     SQLiteDatabase db = mHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
@@ -237,18 +249,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                 }
 
 
-                else if(title.equals("") && content.equals("")) {
-                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題及內容不能是空白!!", Toast.LENGTH_LONG);
-                    toast.show();
-                }
-//                else if(title.equals("")) {
-//                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
-//                    toast.show();
-//                }
-                else if(content.equals("")) {
-                    Toast toast = Toast.makeText(AddDiaryActivity.this, "內容不能是空白!!", Toast.LENGTH_LONG);
-                    toast.show();
-                }
+
                 break;
             case R.id.add_diary_fab_add:
                 sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
@@ -316,9 +317,9 @@ public class AddDiaryActivity extends AppCompatActivity {
                     Bitmap bitmap = (Bitmap) bundle.get("data");
                     img.setImageBitmap(bitmap);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 10, baos);
-                    int options = 100;
-                    while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 500, baos);
+                    int options = 500;
+                    while (baos.toByteArray().length / 1024 > 500) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                         baos.reset();//重置baos即清空baos
                         bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                         options -= 10;//每次都减少10
@@ -337,9 +338,9 @@ public class AddDiaryActivity extends AppCompatActivity {
                         Bitmap bitmap_gal = BitmapFactory.decodeStream(cr.openInputStream(uri));
                         img.setImageBitmap(bitmap_gal);
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap_gal.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        int options = 100;
-                        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                        bitmap_gal.compress(Bitmap.CompressFormat.JPEG, 500, baos);
+                        int options = 500;
+                        while (baos.toByteArray().length / 1024 > 500) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                             baos.reset();//重置baos即清空baos
                             bitmap_gal.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                             options -= 10;//每次都减少10

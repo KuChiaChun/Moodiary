@@ -130,11 +130,11 @@ public class chat_MainActivity extends BaseActivity {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null) {
             // Not signed in, show the Sign In button
-            signInButton.setVisibility(View.VISIBLE);
+//            signInButton.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(ProgressBar.GONE);
             userRecyclerView.setAdapter(null);
         } else {
-            signInButton.setVisibility(View.GONE);
+//            signInButton.setVisibility(View.GONE);
             mFirebaseDatabaseReference
                     .child(User.CHILD_NAME).child(mFirebaseUser.getUid())
                     .setValue(User.fromFirebaseUser(mFirebaseUser));
@@ -227,14 +227,14 @@ public class chat_MainActivity extends BaseActivity {
     }
 
     private void initView() {
-        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                startActivityForResult(signInIntent, REQ_SIGN_IN);
-            }
-        });
+//        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+//        signInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//                startActivityForResult(signInIntent, REQ_SIGN_IN);
+//            }
+//        });
 
         userRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
         // Initialize ProgressBar and RecyclerView.

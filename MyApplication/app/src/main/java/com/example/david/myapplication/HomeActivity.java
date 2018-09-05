@@ -1,8 +1,11 @@
 package com.example.david.myapplication;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -154,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private SignInButton signInButton;
-    private Button singOutButton,memo,chat,fuck,entermood;
+    private Button singOutButton,memo,chat,fuck,entermood,Account;
 
     private static final int RC_SIGN_IN = 1;
 
@@ -170,12 +173,22 @@ public class HomeActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_home);
 //        singOutButton = (Button) findViewById(R.id.singoutButton);
+        Account = findViewById(R.id.account);
+        Account.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(HomeActivity.this, AccountActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         chat = findViewById(R.id.chatbutton);
         chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(HomeActivity.this, chat_MainActivity.class);
+                intent.setClass(HomeActivity.this, ExchangeDiary.class);
                 startActivity(intent);
                 finish();
             }
@@ -290,5 +303,35 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(HomeActivity.this, "SingOut", Toast.LENGTH_LONG).show();
             }
         });
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) { // 攔截返回鍵
+            new AlertDialog.Builder(HomeActivity.this)
+                    .setTitle("確認視窗")
+                    .setMessage("確定要結束Moodiary嗎?")
+                    .setPositiveButton("確定",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    finish();
+                                }
+                            })
+                    .setNegativeButton("取消",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    // TODO Auto-generated method stub
+
+                                }
+                            }).show();
+        }
+        return true;
     }
 }

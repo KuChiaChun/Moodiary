@@ -126,10 +126,11 @@ public class diary_MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         initTitle();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child(Diary.CHILD_NAME);
-        Log.d("123", "User ID:" + mFirebaseUser.getUid());
-
+        if (mFirebaseAuth.getCurrentUser() != null) {
+            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+            diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child(Diary.CHILD_NAME);
+            Log.d("123", "User ID:" + mFirebaseUser.getUid());
+        }
         mMainRvShowDiary.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mMainRvShowDiary.setAdapter(new DiaryAdapter(this, mDiaryBeanList));
         mTvTest = new TextView(this);
@@ -159,13 +160,11 @@ public class diary_MainActivity extends BaseActivity {
                         String content = cursor2.getString(cursor2.getColumnIndex("content"));
                         String mood = cursor2.getString(cursor2.getColumnIndex("mood"));
 
-                        Diary diary = new Diary(content,mood,title,date,userName );
+                        Diary diary = new Diary(content, mood, title, date, userName);
                         diaryReference.push().setValue(diary);
                     } while (cursor2.moveToNext());
                 }
                 cursor2.close();
-//                Diary diary = new Diary("123", "123", "123", dts, "123");
-//                diaryReference.push().setValue(diary);
             }
         });
     }
@@ -191,9 +190,9 @@ public class diary_MainActivity extends BaseActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                Date datestring =sdf.parse(date);
+                Date datestring = sdf.parse(date);
                 date = sdf2.format(datestring);
-                Date datesys =new Date();
+                Date datesys = new Date();
 
                 String dateSystem = sdf2.format(datesys);
 //                String dateSystem = GetDate.getDate().toString();
@@ -210,7 +209,7 @@ public class diary_MainActivity extends BaseActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                Date datestring =sdf.parse(date);
+                Date datestring = sdf.parse(date);
                 date = sdf2.format(datestring);
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));

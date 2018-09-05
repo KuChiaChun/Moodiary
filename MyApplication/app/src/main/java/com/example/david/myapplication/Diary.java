@@ -6,7 +6,7 @@ public class Diary {
 
     private String title;
     private String name;
-    private String Date;
+    private String date;
     private String mood;
     private String content;
 
@@ -14,14 +14,13 @@ public class Diary {
         //重要！空的 constructor 為 Firebase Realtime Database 必須要有的。
     }
 
-    public Diary(   String content,String mood,String title,String Date,String name) {
+    public Diary(String content, String mood, String title, String date, String name) {
         this.title = title;
         this.name = name;
         this.mood = mood;
-        this.Date = Date;
+        this.date = date;
         this.content = content;
     }
-
 
 
     public void setTitle(String title) {
@@ -29,17 +28,13 @@ public class Diary {
     }
 
 
-
     public void setName(String name) {
         this.name = name;
     }
 
 
-
-
-
-    public void setDate(String text) {
-        this.Date = Date;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getContent() {
@@ -54,13 +49,14 @@ public class Diary {
         return title;
     }
 
-    public String getDate() {
-        return Date;
+    public String getdate() {
+        return date;
     }
 
     public String getName() {
         return name;
     }
+
     public void setmood(String mood) {
         this.mood = mood;
     }
