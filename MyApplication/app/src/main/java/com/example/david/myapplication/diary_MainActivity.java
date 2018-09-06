@@ -2,6 +2,7 @@ package com.example.david.myapplication;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -107,6 +109,7 @@ public class diary_MainActivity extends BaseActivity {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +144,7 @@ public class diary_MainActivity extends BaseActivity {
             public void onClick(View v) {
                 String userName = ANONYMOUS;
                 String photoUrl = null;
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 Date dt = new Date();
                 String dts = sdf.format(dt);
                 if (null != mFirebaseUser) {
@@ -155,8 +158,18 @@ public class diary_MainActivity extends BaseActivity {
                 cursor2.moveToFirst();
                 if (cursor2.moveToFirst()) {
                     do {
-                        String title = cursor2.getString(cursor2.getColumnIndex("title"));
+                        SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                         String date = cursor2.getString(cursor2.getColumnIndex("date"));
+                        Date datestring = null;
+                        try {
+                            datestring = sdf2.parse(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        date = sdf3.format(datestring);
+                        String title = cursor2.getString(cursor2.getColumnIndex("title"));
+//                        String date = cursor2.getString(cursor2.getColumnIndex("date"));
                         String content = cursor2.getString(cursor2.getColumnIndex("content"));
                         String mood = cursor2.getString(cursor2.getColumnIndex("mood"));
 
@@ -167,6 +180,36 @@ public class diary_MainActivity extends BaseActivity {
                 cursor2.close();
             }
         });
+//        upload.setOnTouchListener(new View.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (MotionEvent.ACTION_DOWN == event.getAction()) {
+//                    int count = 0;
+//                    count++;
+//                    long firClick = 0;
+//                    long secClick = 0;
+//                    if (count == 1) {
+//                        firClick = System.currentTimeMillis();
+//                    } else if (count == 2) {
+//                        secClick = System.currentTimeMillis();
+//                        if (secClick - firClick < 1000) {
+////按兩下事件
+////                            SQLiteDatabase db = this.getWritableDatabase();
+////                            db.execSQL("DROP TABLE IF EXISTS history"); //刪除history table
+//                            mHelper.onUpgrade(mHelper.getWritableDatabase(),1,2);
+////                            this.onCreate(db); //在onCreate去新增
+////                            db.close();
+//                        }
+//                        count = 0;
+//                        firClick = 0;
+//                        secClick = 0;
+//                    }
+//                }
+//                return true;
+//            }
+//
+//        });
     }
 
     private void initTitle() {
@@ -187,11 +230,11 @@ public class diary_MainActivity extends BaseActivity {
 
         if (cursor.moveToFirst()) {
             do {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                Date datestring = sdf.parse(date);
-                date = sdf2.format(datestring);
+//                Date datestring = sdf.parse(date);
+//                date = sdf2.format(datestring);
                 Date datesys = new Date();
 
                 String dateSystem = sdf2.format(datesys);
@@ -206,11 +249,11 @@ public class diary_MainActivity extends BaseActivity {
 
         if (cursor.moveToFirst()) {
             do {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-                Date datestring = sdf.parse(date);
-                date = sdf2.format(datestring);
+//                Date datestring = sdf.parse(date);
+//                date = sdf2.format(datestring);
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));
                 String mood = cursor.getString(cursor.getColumnIndex("mood"));
@@ -257,6 +300,7 @@ public class diary_MainActivity extends BaseActivity {
     @OnClick(R.id.main_fab_enter_edit)
     public void onClick() {
         AddDiaryActivity.startActivity(this);
+        finish();
     }
 
     @Override
@@ -268,3 +312,5 @@ public class diary_MainActivity extends BaseActivity {
         return true;
     }
 }
+
+

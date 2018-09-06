@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -65,11 +66,11 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
  * Created by 李 on 2017/1/26.
  */
 public class AddDiaryActivity extends AppCompatActivity {
-    String moodtext=" ";
-    int left1=0;
-    int right1=0;
-    int top1=0;
-    int bot1=0;
+    String moodtext = " ";
+    int left1 = 0;
+    int right1 = 0;
+    int top1 = 0;
+    int bot1 = 0;
     String addbmp = "";
     private final int IMAGE_RESULT_CODE = 1;
     private final int PICK_IMAGE = 2;
@@ -105,7 +106,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    public static void startActivity(Context context, String title, String mood , String content,String bmp1) {
+    public static void startActivity(Context context, String title, String mood, String content, String bmp1) {
         Intent intent = new Intent(context, AddDiaryActivity.class);
         intent.putExtra("title", title);
         intent.putExtra("mood", mood);
@@ -120,17 +121,16 @@ public class AddDiaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_diary);
 
         //心情
-        Spinner spinner = (Spinner)findViewById(R.id.mood_spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.mood_spinner);
         final String[] lunch = {"開心", "平靜", "難過", "憤怒", "失望"};
-        ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,lunch);
+        ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, lunch);
         spinner.setAdapter(lunchList);
-
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                moodtext=lunch[i];
+                moodtext = lunch[i];
             }
 
             @Override
@@ -152,7 +152,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         mAddDiaryEtContent.setText(intent.getStringExtra("content"));
         mHelper = new DiaryDatabaseHelper(this, "Diary.db", null, 1);
 
-       img.setOnTouchListener(new View.OnTouchListener() {
+        img.setOnTouchListener(new View.OnTouchListener() {
 
             private float x, y;    // 原本圖片存在的X,Y軸位置
             private int mx, my; // 圖片被拖曳的X ,Y軸距離長度
@@ -187,15 +187,43 @@ public class AddDiaryActivity extends AppCompatActivity {
                 return true;
             }
         });
-        }
+    }
 
 
-
-    @OnClick({R.id.common_iv_back, R.id.add_diary_et_title, R.id.add_diary_et_content, R.id.add_diary_fab_back, R.id.add_diary_fab_add,R.id.imageView})
+    @OnClick({R.id.common_iv_back, R.id.add_diary_et_title, R.id.add_diary_et_content, R.id.add_diary_fab_back, R.id.add_diary_fab_add, R.id.imageView})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.common_iv_back:
-                diary_MainActivity.startActivity(this);
+                final String titleBack2 = mAddDiaryEtTitle.getText().toString();
+                final String contentBack2 = mAddDiaryEtContent.getText().toString();
+                if (!titleBack2.isEmpty() || !contentBack2.isEmpty()) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+//                            SQLiteDatabase db = mHelper.getWritableDatabase();
+//                            ContentValues values = new ContentValues();
+//                            values.put("date", dateBack);
+//                            values.put("title", titleBack);
+//                            values.put("mood", moodBack);
+//                            values.put("content", contentBack);
+//                            values.put("bmp1", bmp1back);
+//                            db.insert("Diary", null, values);
+//                            values.clear();
+                            finish();
+                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+
+                        }
+                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+//                            finish();
+//                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+                        }
+                    }).show();
+
+                } else {
+                    finish();
+                    diary_MainActivity.startActivity(this);
+                }
             case R.id.add_diary_et_title:
                 break;
             case R.id.add_diary_et_content:
@@ -205,7 +233,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                 break;
 
             case R.id.add_diary_fab_back:
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 Date dt = new Date();
                 String date = sdf.format(dt);
                 String tag = String.valueOf(System.currentTimeMillis());
@@ -213,7 +241,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                 String mood = moodtext;
                 String content = mAddDiaryEtContent.getText().toString() + "";
                 String bmp1 = addbmp;
-                if(title.equals("")) {
+                if (title.equals("")) {
                     Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
                     toast.show();
                 }
@@ -225,11 +253,10 @@ public class AddDiaryActivity extends AppCompatActivity {
 //                    Toast toast = Toast.makeText(AddDiaryActivity.this, "標題不能是空白!!", Toast.LENGTH_LONG);
 //                    toast.show();
 //                }
-                else if(content.equals("")) {
+                else if (content.equals("")) {
                     Toast toast = Toast.makeText(AddDiaryActivity.this, "內容不能是空白!!", Toast.LENGTH_LONG);
                     toast.show();
-                }
-                else if (!title.equals("") || !content.equals("")) {
+                } else if (!title.equals("") || !content.equals("")) {
                     SQLiteDatabase db = mHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
 
@@ -249,10 +276,10 @@ public class AddDiaryActivity extends AppCompatActivity {
                 }
 
 
-
+                finish();
                 break;
             case R.id.add_diary_fab_add:
-                sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
+                sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 dt = new Date();
                 final String dateBack = sdf.format(dt);
                 final String titleBack = mAddDiaryEtTitle.getText().toString();
@@ -261,45 +288,46 @@ public class AddDiaryActivity extends AppCompatActivity {
                 final String bmp1back = addbmp;
 
 
-
-
-                if(!titleBack.isEmpty() || !contentBack.isEmpty()){
+                if (!titleBack.isEmpty() || !contentBack.isEmpty()) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                    alertDialogBuilder.setMessage("是否保存日記内容？").setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            SQLiteDatabase db = mHelper.getWritableDatabase();
-                            ContentValues values = new ContentValues();
-                            values.put("date", dateBack);
-                            values.put("title", titleBack);
-                            values.put("mood", moodBack);
-                            values.put("content", contentBack);
-                            values.put("bmp1", bmp1back);
-                            db.insert("Diary", null, values);
-                            values.clear();
+//                            SQLiteDatabase db = mHelper.getWritableDatabase();
+//                            ContentValues values = new ContentValues();
+//                            values.put("date", dateBack);
+//                            values.put("title", titleBack);
+//                            values.put("mood", moodBack);
+//                            values.put("content", contentBack);
+//                            values.put("bmp1", bmp1back);
+//                            db.insert("Diary", null, values);
+//                            values.clear();
+                            finish();
                             diary_MainActivity.startActivity(AddDiaryActivity.this);
+
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+//                            finish();
+//                            diary_MainActivity.startActivity(AddDiaryActivity.this);
                         }
                     }).show();
 
-                }else{
+                } else {
+                    finish();
                     diary_MainActivity.startActivity(this);
                 }
                 break;
         }
     }
+
     //拍照
-    public void click1(View v)
-    {
+    public void click1(View v) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, IMAGE_RESULT_CODE);
     }
 
     //從圖庫拿圖
-    public void click2(View v)
-    {
+    public void click2(View v) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -307,17 +335,17 @@ public class AddDiaryActivity extends AppCompatActivity {
     }
 
     //拍照以及從圖庫拿圖
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case IMAGE_RESULT_CODE:
-                if(resultCode==RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     Bitmap bitmap = (Bitmap) bundle.get("data");
                     img.setImageBitmap(bitmap);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 500, baos);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     int options = 500;
                     while (baos.toByteArray().length / 1024 > 500) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                         baos.reset();//重置baos即清空baos
@@ -331,16 +359,16 @@ public class AddDiaryActivity extends AppCompatActivity {
                 break;
 
             case PICK_IMAGE:
-                if(resultCode==RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
                     ContentResolver cr = this.getContentResolver();
                     try {
                         Bitmap bitmap_gal = BitmapFactory.decodeStream(cr.openInputStream(uri));
                         img.setImageBitmap(bitmap_gal);
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap_gal.compress(Bitmap.CompressFormat.JPEG, 500, baos);
-                        int options = 500;
-                        while (baos.toByteArray().length / 1024 > 500) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                        bitmap_gal.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        int options = 100;
+                        while (baos.toByteArray().length / 102400 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                             baos.reset();//重置baos即清空baos
                             bitmap_gal.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                             options -= 10;//每次都减少10
@@ -358,27 +386,29 @@ public class AddDiaryActivity extends AppCompatActivity {
 
     public class diarydata {
 
-        private  String diary;
-        private  String date;
-        private  int   id;
+        private String diary;
+        private String date;
+        private int id;
 
         public diarydata() {
         }
 
-        public diarydata(String diary, String date, int id){
+        public diarydata(String diary, String date, int id) {
             this.id = id;
             this.diary = diary;
             this.date = date;
         }
 
-        public String getDate(){
-            return this.date=date;
+        public String getDate() {
+            return this.date = date;
         }
-        public String getDiary(){
-            return this.diary=diary;
+
+        public String getDiary() {
+            return this.diary = diary;
         }
-        public long getId(){
-            return this.id=id;
+
+        public long getId() {
+            return this.id = id;
         }
     }
 
@@ -386,8 +416,43 @@ public class AddDiaryActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         diary_MainActivity.startActivity(this);
         finish();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        final String titleBack = mAddDiaryEtTitle.getText().toString();
+        final String contentBack = mAddDiaryEtContent.getText().toString();
+        if (!titleBack.isEmpty() || !contentBack.isEmpty()) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+//                            SQLiteDatabase db = mHelper.getWritableDatabase();
+//                            ContentValues values = new ContentValues();
+//                            values.put("date", dateBack);
+//                            values.put("title", titleBack);
+//                            values.put("mood", moodBack);
+//                            values.put("content", contentBack);
+//                            values.put("bmp1", bmp1back);
+//                            db.insert("Diary", null, values);
+//                            values.clear();
+                    finish();
+                    diary_MainActivity.startActivity(AddDiaryActivity.this);
+
+                }
+            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+//                            finish();
+//                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+                }
+            }).show();
+
+        } else {
+            finish();
+            diary_MainActivity.startActivity(this);
+        }
+        return true;
     }
 }
 

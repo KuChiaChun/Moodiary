@@ -1,10 +1,12 @@
 package com.example.david.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -113,6 +115,14 @@ public class ExchangeDiary extends BaseActivity {
             moodTextView = itemView.findViewById(R.id.main_d_mood);
 //            messengerImageView = (CircleImageView) itemView.findViewById(R.id.messenger_thumb);
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Intent intent = new Intent();
+        intent.setClass(ExchangeDiary.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+        return true;
     }
 
 }
