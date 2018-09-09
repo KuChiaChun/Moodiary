@@ -15,6 +15,11 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ExchangeDiary extends BaseActivity {
@@ -31,9 +36,15 @@ public class ExchangeDiary extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
+        Date datesys = new Date();
+        Date datesy = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        String dateSystem = getSpecifiedDayBefore(sdf.format(datesys));
+        String dateSystem = sdf.format(datesys);
 
         chatRoomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
-        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child("ypBlp4kiPIYjDyGkrCwptQdaTVp1").child("diary");
+        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child("ypBlp4kiPIYjDyGkrCwptQdaTVp1").child("diary").child(dateSystem);
         Log.d(TAG, "Room ID:" + chatRoomId);
 
         initView();
@@ -124,6 +135,21 @@ public class ExchangeDiary extends BaseActivity {
         finish();
         return true;
     }
+    public static String getSpecifiedDayBefore(String specifiedDay) {//可以用new Date().toLocalString()传递参数
+        Calendar c = Calendar.getInstance();
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yy-MM-dd").parse(specifiedDay);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        c.setTime(date);
+        int day = c.get(Calendar.DATE);
+        c.set(Calendar.DATE, day - 1);
 
+        String dayBefore = new SimpleDateFormat("yyyy-MM-dd").format(c
+                .getTime());
+        return dayBefore;
+    }
 }
 

@@ -158,9 +158,11 @@ public class diary_MainActivity extends BaseActivity {
                 cursor2.moveToFirst();
                 if (cursor2.moveToFirst()) {
                     do {
+                        SimpleDateFormat sdf4 = new SimpleDateFormat("yyyy-MM-dd");
                         SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                         String date = cursor2.getString(cursor2.getColumnIndex("date"));
+
                         Date datestring = null;
                         try {
                             datestring = sdf2.parse(date);
@@ -168,13 +170,14 @@ public class diary_MainActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                         date = sdf3.format(datestring);
+                        String childdate =sdf4.format(datestring);
                         String title = cursor2.getString(cursor2.getColumnIndex("title"));
 //                        String date = cursor2.getString(cursor2.getColumnIndex("date"));
                         String content = cursor2.getString(cursor2.getColumnIndex("content"));
                         String mood = cursor2.getString(cursor2.getColumnIndex("mood"));
 
                         Diary diary = new Diary(content, mood, title, date, userName);
-                        diaryReference.push().setValue(diary);
+                        diaryReference.child(childdate).push().setValue(diary);
                     } while (cursor2.moveToNext());
                 }
                 cursor2.close();

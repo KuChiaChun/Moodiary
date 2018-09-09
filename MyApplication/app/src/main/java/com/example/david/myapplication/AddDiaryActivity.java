@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -42,6 +43,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -117,6 +120,7 @@ public class AddDiaryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+//        AndroidBug5497Workaround.assistActivity(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_diary);
 
@@ -125,7 +129,19 @@ public class AddDiaryActivity extends AppCompatActivity {
         final String[] lunch = {"開心", "平靜", "難過", "憤怒", "失望"};
         ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, lunch);
         spinner.setAdapter(lunchList);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+                       {
 
+                           public void run()
+                           {
+                               InputMethodManager inputManager =
+                                       (InputMethodManager)mAddDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                               inputManager.showSoftInput(mAddDiaryEtTitle, 0);
+                           }
+
+                       },
+                998);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -200,15 +216,6 @@ public class AddDiaryActivity extends AppCompatActivity {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                     alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-//                            SQLiteDatabase db = mHelper.getWritableDatabase();
-//                            ContentValues values = new ContentValues();
-//                            values.put("date", dateBack);
-//                            values.put("title", titleBack);
-//                            values.put("mood", moodBack);
-//                            values.put("content", contentBack);
-//                            values.put("bmp1", bmp1back);
-//                            db.insert("Diary", null, values);
-//                            values.clear();
                             finish();
                             diary_MainActivity.startActivity(AddDiaryActivity.this);
 
@@ -273,10 +280,11 @@ public class AddDiaryActivity extends AppCompatActivity {
 
                     db.insert("Diary", null, values);
                     diary_MainActivity.startActivity(this);
+                    finish();
                 }
 
 
-                finish();
+
                 break;
             case R.id.add_diary_fab_add:
                 sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
@@ -437,8 +445,10 @@ public class AddDiaryActivity extends AppCompatActivity {
 //                            values.put("bmp1", bmp1back);
 //                            db.insert("Diary", null, values);
 //                            values.clear();
+                    Intent intent = new Intent();
+                    intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
+                    startActivity(intent);
                     finish();
-                    diary_MainActivity.startActivity(AddDiaryActivity.this);
 
                 }
             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -449,8 +459,10 @@ public class AddDiaryActivity extends AppCompatActivity {
             }).show();
 
         } else {
+            Intent intent = new Intent();
+            intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
+            startActivity(intent);
             finish();
-            diary_MainActivity.startActivity(this);
         }
         return true;
     }

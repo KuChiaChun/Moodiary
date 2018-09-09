@@ -24,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".memo_MainActivity">
+        <activity android:name=".memo_MainActivity"
+            android:windowSoftInputMode="adjustPan"
+            >
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
 
@@ -32,7 +34,8 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".chat_MainActivity"/>
-        <activity android:name=".Edit"></activity>
+        <activity android:name=".Edit"
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".AccountActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
@@ -42,7 +45,10 @@
         <activity android:name=".UpdateDiaryActivity"
             android:theme="@style/AppTheme2"/>
         <activity android:name=".AddDiaryActivity"
-            android:theme="@style/AppTheme2"/>
+            android:theme="@style/AppTheme2"
+            android:windowSoftInputMode="adjustPan"
+
+            />
         <activity android:name=".TestActivity" />
         <activity android:name=".diary_MainActivity"
             android:theme="@style/AppTheme2"/>
