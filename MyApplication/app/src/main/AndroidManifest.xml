@@ -26,7 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".memo_MainActivity">
+        <activity android:name=".memo_MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
 
@@ -42,9 +43,11 @@
         <activity android:name=".ExchangeDiary" />
         <activity android:name=".ChatRoomActivity" />
         <activity android:name=".UpdateDiaryActivity"
-            android:theme="@style/AppTheme2"/>
+            android:theme="@style/AppTheme2"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".AddDiaryActivity"
-            android:theme="@style/AppTheme2"/>
+            android:theme="@style/AppTheme2"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".TestActivity" />
         <activity android:name=".diary_MainActivity"
             android:theme="@style/AppTheme2"/>

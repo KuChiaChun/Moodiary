@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.litepal.LitePalApplication;
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
@@ -44,6 +45,7 @@ public class memo_MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LitePalApplication.initialize(this);
 //        setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawableResource(R.drawable.background_2);
         setContentView(R.layout.activity_memo);
@@ -66,9 +68,9 @@ public class memo_MainActivity extends AppCompatActivity
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(memo_MainActivity.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(memo_MainActivity.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
     return true;
     }

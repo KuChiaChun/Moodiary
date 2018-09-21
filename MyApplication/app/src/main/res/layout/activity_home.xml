@@ -101,6 +101,16 @@
         android:layout_marginStart="12dp"
         android:text="帳  戶"
         android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/mate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/fuck"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="91dp"
+        android:onClick="AddtoList"
+        android:text="交換" />
     <!--<com.google.android.gms.common.SignInButton-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->

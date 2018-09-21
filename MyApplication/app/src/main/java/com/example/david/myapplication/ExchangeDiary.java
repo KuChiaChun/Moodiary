@@ -2,6 +2,7 @@ package com.example.david.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,41 +14,134 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ExchangeDiary extends BaseActivity {
     private static final String TAG = ExchangeDiary.class.getSimpleName();
+    private LinkedList<String> list = new LinkedList<>();
     public final static String EXTRA_PREFIX = ChatRoomActivity.class.getName();
     public final static String EXTRA_ROOM_ID = EXTRA_PREFIX + ".ROOM_ID";
-    private String chatRoomId;
+    private String chatRoomId, friend;
     private RecyclerView diaryRecyclerView;
     private LinearLayoutManager dLinearLayoutManager;
-    private DatabaseReference diaryReference;
+    private DatabaseReference diaryReference, qualifyReference, userlistReference, exchangeReference;
     private FirebaseRecyclerAdapter<Diary, DiaryViewHolder> dFirebaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
-        Date datesys = new Date();
-        Date datesy = new Date();
+        final Date datesys = new Date();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        final String dateSystem = sdf.format(datesys);
+        exchangeReference = mFirebaseDatabaseReference.child("exchange").child(getSpecifiedDayBefore(dateSystem, 1));
+        userlistReference = mFirebaseDatabaseReference.child("exchange").child(getSpecifiedDayBefore(dateSystem, 1));
+        userlistReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                list.clear();
+                if (dataSnapshot.child("end").getValue().equals(false)) {
+                    for (DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
+                        list.add(ds.getValue().toString());
+                    }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        String dateSystem = getSpecifiedDayBefore(sdf.format(datesys));
-        String dateSystem = sdf.format(datesys);
+                    if (!list.isEmpty()) {
+                        Collections.shuffle(list);
+                        int count = 1;
+                        String user1 = null, user2 = null;
+                        for (String i : list) {
+                            if (count % 2 != 0) {
+                                user1 = i;
+                            } else {
+                                user2 = i;
+                                userlistReference.child("users").child((user1)).setValue(user2);
+                                userlistReference.child("users").child((user2)).setValue(user1);
+                            }
+                            count++;
+                        }
+                        userlistReference.child("end").setValue(true);
+                    }
 
+                }
+                exchangeReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        friend = dataSnapshot.child("users").child(mFirebaseUser.getUid()).getValue().toString();
+                        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(friend).child("diary").child(getSpecifiedDayBefore(dateSystem, 1));
+                        initView();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         chatRoomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
-        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child("ypBlp4kiPIYjDyGkrCwptQdaTVp1").child("diary").child(dateSystem);
-        Log.d(TAG, "Room ID:" + chatRoomId);
+//        exchangeReference = mFirebaseDatabaseReference.child("exchange").child(getSpecifiedDayBefore(dateSystem, 1));
+//        exchangeReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                friend = dataSnapshot.child(mFirebaseUser.getUid()).getValue().toString();
+//                diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(friend).child("diary").child(getSpecifiedDayBefore(dateSystem, 1));
+//                initView();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
-        initView();
+        Log.d(TAG, mFirebaseUser.getUid());
+
+
+        //檢查使用者前5天上傳日記是否大於3，如果有則設定qualified屬性為true，
+        qualifyReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("diary");
+
+        qualifyReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int count = 0;
+                for (int minus = 0; minus <= 4; minus++) {
+                    if (dataSnapshot.child(getSpecifiedDayBefore(sdf.format(datesys), minus)).getChildrenCount() > 0) {
+                        count++;
+                    }
+                }
+                if (count >= 3) {
+                    mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("qualified").setValue(true);
+                } else
+                    mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("qualified").setValue(false);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     @Override
@@ -57,6 +151,10 @@ public class ExchangeDiary extends BaseActivity {
             finish();
             return;
         }
+    }
+
+    public void userlistupdate(View v) {
+
     }
 
     private void initView() {
@@ -80,8 +178,8 @@ public class ExchangeDiary extends BaseActivity {
 
                 viewHolder.dateTextView.setText(diary.getdate());
                 viewHolder.contentTextView.setText(diary.getContent());
-                viewHolder.titleTextView.setText(diary.getTitle()+"  ");
-                viewHolder.moodTextView.setText("心情:"+diary.getmood());
+                viewHolder.titleTextView.setText(diary.getTitle() + "  ");
+                viewHolder.moodTextView.setText("心情:" + diary.getmood());
             }
         };
 
@@ -127,17 +225,20 @@ public class ExchangeDiary extends BaseActivity {
 //            messengerImageView = (CircleImageView) itemView.findViewById(R.id.messenger_thumb);
         }
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(ExchangeDiary.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(ExchangeDiary.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
         return true;
     }
-    public static String getSpecifiedDayBefore(String specifiedDay) {//可以用new Date().toLocalString()传递参数
+
+    public static String getSpecifiedDayBefore(String specifiedDay, int minus) {//可以用new Date().toLocalString()传递参数
         Calendar c = Calendar.getInstance();
         Date date = null;
+
         try {
             date = new SimpleDateFormat("yy-MM-dd").parse(specifiedDay);
         } catch (ParseException e) {
@@ -145,11 +246,12 @@ public class ExchangeDiary extends BaseActivity {
         }
         c.setTime(date);
         int day = c.get(Calendar.DATE);
-        c.set(Calendar.DATE, day - 1);
+        c.set(Calendar.DATE, day - minus);
 
         String dayBefore = new SimpleDateFormat("yyyy-MM-dd").format(c
                 .getTime());
         return dayBefore;
     }
+
 }
 

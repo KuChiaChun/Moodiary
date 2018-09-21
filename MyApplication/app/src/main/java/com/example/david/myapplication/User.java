@@ -13,6 +13,7 @@ public class User {
     private String email;
     private String displayName;
     private String photoUrl;
+    private boolean qualified;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)

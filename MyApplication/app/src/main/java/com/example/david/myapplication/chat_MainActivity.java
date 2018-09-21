@@ -66,9 +66,9 @@ public class chat_MainActivity extends BaseActivity {
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(chat_MainActivity.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(chat_MainActivity.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
         return true;
     }

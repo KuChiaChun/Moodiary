@@ -88,7 +88,7 @@ public class diary_MainActivity extends BaseActivity {
     @BindView(R.id.main_ll_main)
     LinearLayout mMainLlMain;
     private List<DiaryBean> mDiaryBeanList;
-
+    private DiaryAdapter adapter;
     private DiaryDatabaseHelper mHelper;
 
     private static String IS_WRITE = "true";
@@ -101,6 +101,7 @@ public class diary_MainActivity extends BaseActivity {
     private boolean isWrite = false;
     private static TextView mTvTest;
     private DatabaseReference diaryReference;
+    private SQLiteDatabase sqLiteDatabase;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, diary_MainActivity.class);
@@ -113,6 +114,7 @@ public class diary_MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("123", "createeeeeeee");
         setContentView(R.layout.activity_diary);
 //        AppManager.getAppManager().addActivity(this);
         getWindow().setBackgroundDrawableResource(R.drawable.background_5);
@@ -134,8 +136,11 @@ public class diary_MainActivity extends BaseActivity {
             diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child(Diary.CHILD_NAME);
             Log.d("123", "User ID:" + mFirebaseUser.getUid());
         }
+
         mMainRvShowDiary.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mMainRvShowDiary.setAdapter(new DiaryAdapter(this, mDiaryBeanList));
+        adapter = new DiaryAdapter(this, mDiaryBeanList);
+        mMainRvShowDiary.setAdapter(adapter);
+
         mTvTest = new TextView(this);
         mTvTest.setText("hello world");
 
@@ -153,7 +158,7 @@ public class diary_MainActivity extends BaseActivity {
                         photoUrl = mFirebaseUser.getPhotoUrl().toString();
                     }
                 }
-                SQLiteDatabase sqLiteDatabase = mHelper.getWritableDatabase();
+                sqLiteDatabase = mHelper.getWritableDatabase();
                 Cursor cursor2 = sqLiteDatabase.query("Diary", null, null, null, null, null, null);
                 cursor2.moveToFirst();
                 if (cursor2.moveToFirst()) {
@@ -169,15 +174,18 @@ public class diary_MainActivity extends BaseActivity {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                        Date today = new Date();
                         date = sdf3.format(datestring);
-                        String childdate =sdf4.format(datestring);
+                        String Today = sdf4.format(today);
+                        String childdate = sdf4.format(datestring);
                         String title = cursor2.getString(cursor2.getColumnIndex("title"));
 //                        String date = cursor2.getString(cursor2.getColumnIndex("date"));
                         String content = cursor2.getString(cursor2.getColumnIndex("content"));
                         String mood = cursor2.getString(cursor2.getColumnIndex("mood"));
-
-                        Diary diary = new Diary(content, mood, title, date, userName);
-                        diaryReference.child(childdate).push().setValue(diary);
+                        if (childdate.equals(Today)) {
+                            Diary diary = new Diary(content, mood, title, date, userName);
+                            diaryReference.child(childdate).push().setValue(diary);
+                        }
                     } while (cursor2.moveToNext());
                 }
                 cursor2.close();
@@ -197,12 +205,12 @@ public class diary_MainActivity extends BaseActivity {
 //                    } else if (count == 2) {
 //                        secClick = System.currentTimeMillis();
 //                        if (secClick - firClick < 1000) {
-////按兩下事件
-////                            SQLiteDatabase db = this.getWritableDatabase();
-////                            db.execSQL("DROP TABLE IF EXISTS history"); //刪除history table
+//按兩下事件
+//                            SQLiteDatabase db = this.getWritableDatabase();
+//                            db.execSQL("DROP TABLE IF EXISTS history"); //刪除history table
 //                            mHelper.onUpgrade(mHelper.getWritableDatabase(),1,2);
-////                            this.onCreate(db); //在onCreate去新增
-////                            db.close();
+//                            this.onCreate(db); //在onCreate去新增
+//                            db.close();
 //                        }
 //                        count = 0;
 //                        firClick = 0;
@@ -214,6 +222,7 @@ public class diary_MainActivity extends BaseActivity {
 //
 //        });
     }
+
 
     private void initTitle() {
         mMainTvDate.setText("今天，" + GetDate.getDate());
@@ -228,7 +237,8 @@ public class diary_MainActivity extends BaseActivity {
 
         mDiaryBeanList = new ArrayList<>();
         List<DiaryBean> diaryList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = mHelper.getWritableDatabase();
+        sqLiteDatabase = mHelper.getWritableDatabase();
+
         Cursor cursor = sqLiteDatabase.query("Diary", null, null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -244,6 +254,7 @@ public class diary_MainActivity extends BaseActivity {
 //                String dateSystem = GetDate.getDate().toString();
                 if (date.equals(dateSystem)) {
                     mMainLlMain.removeView(mItemFirst);
+                    mItemFirst.setVisibility(View.GONE);
                     break;
                 }
             } while (cursor.moveToNext());
@@ -303,16 +314,32 @@ public class diary_MainActivity extends BaseActivity {
     @OnClick(R.id.main_fab_enter_edit)
     public void onClick() {
         AddDiaryActivity.startActivity(this);
-        finish();
+//        finish();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(diary_MainActivity.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(diary_MainActivity.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
         return true;
+    }
+
+    @Override
+    public void onResume() {
+        int i = 0;
+        super.onResume();
+
+        Log.v("123", "onResume!!!!!!!!!!!!!!!!!!!!!");
+        try {
+            getDiaryBeanList();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        adapter = new DiaryAdapter(this, mDiaryBeanList);
+        mMainRvShowDiary.setAdapter(adapter);
+
     }
 }
 

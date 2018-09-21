@@ -109,6 +109,13 @@
                     android:layout_weight="1"
                     android:onClick="click2"
                     android:text="相簿" />
+                <Button
+                    android:id="@+id/button6"
+                    android:layout_width="178dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="click3"
+                    android:text="每日一拍" />
             </LinearLayout>
 
             <LinearLayout

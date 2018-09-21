@@ -1,4 +1,5 @@
 package com.example.david.myapplication;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,152 +26,36 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
-//public class HomeActivity extends AppCompatActivity {
-//    //google
-//    private SignInButton signInButton;
-//    private GoogleApiClient mGoogleApiClient;
-//    private GoogleSignInOptions gso;
-//    private TextView textView;
-//    private static int RC_SIGN_IN = 100;
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode!=RESULT_CANCELED){
-//            if(requestCode ==RC_SIGN_IN && data != null){
-//                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-//
-//                handleSignInResult(result);
-//            }else {
-//                textView = findViewById(R.id.textView);
-//                textView.setText("onActivityResult");
-//
-//            }
-//        }
-//    }
-//
-//    private void handleSignInResult(GoogleSignInResult result) {
-//        Log.d("Success","handleSignInResult:"+ result.isSuccess());
-//        if(result.isSuccess()){
-//            GoogleSignInAccount acct = result.getSignInAccount();
-//            firebaseAuthWithGoogle(acct);
-//        }
-//        else{
-//            textView = findViewById(R.id.textView);
-//            textView.setText("handleSignInResult");
-//        }
-//    }
-//
-//    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-//        Log.d("FireBase2Google","firebaseAuthWithGoogle"+acct.getId());
-//
-//        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(),null);
-//        mAuth.signInWithCredential(credential)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if(task.isSuccessful()){
-//                            Log.d("Success","signInWithCredential:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            textView = findViewById(R.id.textView);
-//                            textView.setText(user.getDisplayName());
-////                            updateUI(user);
-//                        }
-//                    else{
-//                            textView = findViewById(R.id.textView);
-//                            textView.setText("fuck");
-//                            Log.w("fail","signInWithCredential:failure",task.getException());
-//                        }
-//                    }
-//                });
-//    }
-//
-//    private void googleConfig(){
-//
-//        signInButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                signIn();
-//            }
-//        });
-//        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken("1:87146277394:android:b0a15ac72cc44abf")
-//                .requestEmail()
-//                .build();
-//        mGoogleApiClient = new  GoogleApiClient.Builder(this).addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-//                .build();
-//    }
-//
-//    private void signIn() {
-//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-//        startActivityForResult(signInIntent,RC_SIGN_IN);
-//    }
-//
-//    private Button login;
-//    private Button signUp;
-//
-//
-//    private FirebaseAuth mAuth;
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        mAuth = FirebaseAuth.getInstance();
-//        FirebaseUser user = mAuth.getCurrentUser();
-//        if(user == null){
-//            setContentView(R.layout.activity_home);
-//            login = (Button) findViewById(R.id.login);
-//            signUp = (Button) findViewById(R.id.sign_up);
-//
-//            login.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent();
-//                    intent.setClass(HomeActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//
-//                }
-//            });
-//            signUp.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent();
-//                    intent.setClass(HomeActivity.this, SignUpActivity.class);
-//                    startActivity(intent);
-//                }
-//            });
-//        } else{
-//            Intent intent = new Intent();
-//            intent.setClass(HomeActivity.this, MainActivity.class);
-//            startActivity(intent);
-//
-//        }
-//        setContentView(R.layout.activity_home);
-//        signInButton = findViewById(R.id.googleSignIn);
-//        googleConfig();
-//
-//    }
-//
-//}
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class HomeActivity extends AppCompatActivity {
+
+public class HomeActivity extends BaseActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
-    private SignInButton signInButton;
-    private Button singOutButton,memo,chat,fuck,entermood,Account;
+    private Button memo, chat, diary, entermood, Account;
 
     private static final int RC_SIGN_IN = 1;
-
+    private DatabaseReference userlistReference, userReference;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
+    private String dateSystem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawableResource(R.drawable.background_4_new);
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        final Date datesys = new Date();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        dateSystem = sdf.format(datesys);
+
         setContentView(R.layout.activity_home);
 //        singOutButton = (Button) findViewById(R.id.singoutButton);
         Account = findViewById(R.id.account);
@@ -180,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(HomeActivity.this, AccountActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
         chat = findViewById(R.id.chatbutton);
@@ -190,39 +75,44 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(HomeActivity.this, ExchangeDiary.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
-        memo = (Button)findViewById(R.id.memo);
+        memo = (Button) findViewById(R.id.memo);
         memo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(HomeActivity.this, memo_MainActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
-        fuck = (Button)findViewById(R.id.fuck);
-        fuck.setOnClickListener(new View.OnClickListener() {
+        diary = (Button) findViewById(R.id.fuck);
+        diary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(HomeActivity.this, diary_MainActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
-        entermood = (Button)findViewById(R.id.entermood);
+        entermood = (Button) findViewById(R.id.entermood);
         entermood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(HomeActivity.this, Moodbar.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
+
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
 //        signInButton = (SignInButton) findViewById(R.id.googleSignIn);
 
         // 設定 FirebaseAuth 介面
@@ -233,30 +123,45 @@ public class HomeActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(HomeActivity.this, "Google", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-//        signInButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-//                startActivityForResult(signInIntent, RC_SIGN_IN);
-//            }
-//        });
-
-//        singOutButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                firebaseSingOut(v);
-//            }
-//        });
     }
+
+    public void AddtoList(View v) {
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        userlistReference = mFirebaseDatabaseReference.child("exchange").child(dateSystem).child(User.CHILD_NAME);
+        userReference = mFirebaseDatabaseReference.child("users").child(mFirebaseUser.getUid());
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child("qualified").getValue().equals(true)) {
+                    userlistReference.child(mFirebaseUser.getUid()).setValue(mFirebaseUser.getUid());
+                }
+                mFirebaseDatabaseReference.child("exchange").child(ExchangeDiary.getSpecifiedDayBefore(dateSystem, 0)).child("end").setValue(false);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        userlistReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        if (userReference.toString().equals("false")) {
+            userlistReference.child(mFirebaseUser.getUid()).setValue(userReference);
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -304,6 +209,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub

@@ -77,9 +77,9 @@ public class AccountActivity extends AppCompatActivity {
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(AccountActivity.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(AccountActivity.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
         return true;
     }

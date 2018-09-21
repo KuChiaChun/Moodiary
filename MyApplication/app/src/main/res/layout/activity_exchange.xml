@@ -14,8 +14,13 @@
 
         />
 
-
-
+    <Button
+        android:id="@+id/userlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:onClick="userlistupdate"
+        android:text="交換" />
 
 
 </RelativeLayout>

@@ -4,5 +4,6 @@
     <version value="1"></version>
     <list>
         <mapping class="com.example.david.myapplication.Memo"></mapping>
+        <mapping class="com.example.david.myapplication.memo_MainActivity"></mapping>
     </list>
     </litepal>

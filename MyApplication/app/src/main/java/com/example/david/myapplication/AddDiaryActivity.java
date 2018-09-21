@@ -41,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -130,13 +131,11 @@ public class AddDiaryActivity extends AppCompatActivity {
         ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, lunch);
         spinner.setAdapter(lunchList);
         Timer timer = new Timer();
-        timer.schedule(new TimerTask()
-                       {
+        timer.schedule(new TimerTask() {
 
-                           public void run()
-                           {
+                           public void run() {
                                InputMethodManager inputManager =
-                                       (InputMethodManager)mAddDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                       (InputMethodManager) mAddDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                                inputManager.showSoftInput(mAddDiaryEtTitle, 0);
                            }
 
@@ -217,19 +216,18 @@ public class AddDiaryActivity extends AppCompatActivity {
                     alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
-                            diary_MainActivity.startActivity(AddDiaryActivity.this);
 
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-//                            finish();
+                            finish();
 //                            diary_MainActivity.startActivity(AddDiaryActivity.this);
                         }
                     }).show();
 
                 } else {
                     finish();
-                    diary_MainActivity.startActivity(this);
+//                    diary_MainActivity.startActivity(this);
                 }
             case R.id.add_diary_et_title:
                 break;
@@ -279,10 +277,9 @@ public class AddDiaryActivity extends AppCompatActivity {
                     values.put("bmp1", bmp1);
 
                     db.insert("Diary", null, values);
-                    diary_MainActivity.startActivity(this);
+//                    diary_MainActivity.startActivity(this);
                     finish();
                 }
-
 
 
                 break;
@@ -310,7 +307,7 @@ public class AddDiaryActivity extends AppCompatActivity {
 //                            db.insert("Diary", null, values);
 //                            values.clear();
                             finish();
-                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+//                            diary_MainActivity.startActivity(AddDiaryActivity.this);
 
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -322,7 +319,7 @@ public class AddDiaryActivity extends AppCompatActivity {
 
                 } else {
                     finish();
-                    diary_MainActivity.startActivity(this);
+//                    diary_MainActivity.startActivity(this);
                 }
                 break;
         }
@@ -340,6 +337,11 @@ public class AddDiaryActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, PICK_IMAGE);
+    }
+
+    public void click3(View v) {
+        Intent intent = new Intent(this, DetectionActivity.class);
+        startActivity(intent);
     }
 
     //拍照以及從圖庫拿圖
@@ -428,6 +430,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         diary_MainActivity.startActivity(this);
         finish();
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         final String titleBack = mAddDiaryEtTitle.getText().toString();
@@ -445,9 +448,9 @@ public class AddDiaryActivity extends AppCompatActivity {
 //                            values.put("bmp1", bmp1back);
 //                            db.insert("Diary", null, values);
 //                            values.clear();
-                    Intent intent = new Intent();
-                    intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent();
+//                    intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
+//                    startActivity(intent);
                     finish();
 
                 }
@@ -459,9 +462,9 @@ public class AddDiaryActivity extends AppCompatActivity {
             }).show();
 
         } else {
-            Intent intent = new Intent();
-            intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent();
+//            intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
+//            startActivity(intent);
             finish();
         }
         return true;

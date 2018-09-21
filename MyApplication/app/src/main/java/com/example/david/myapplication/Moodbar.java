@@ -97,9 +97,9 @@ private int DATA_COUNT=5;
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Intent intent = new Intent();
-        intent.setClass(Moodbar.this, HomeActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(Moodbar.this, HomeActivity.class);
+//        startActivity(intent);
         finish();
         return true;
     }

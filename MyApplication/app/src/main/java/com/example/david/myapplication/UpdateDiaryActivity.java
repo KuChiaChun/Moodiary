@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -22,6 +23,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 //import com.lizehao.watermelondiarynew.widget.LinedEditText;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +88,19 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_diary);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+                       {
+
+                           public void run()
+                           {
+                               InputMethodManager inputManager =
+                                       (InputMethodManager)mUpdateDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                               inputManager.showSoftInput(mUpdateDiaryEtTitle, 0);
+                           }
+
+                       },
+                998);
         //心情
         Spinner spinner = (Spinner)findViewById(R.id.mood_spinner);
         final String[] lunch = {"開心", "平靜", "難過", "憤怒", "失望"};
