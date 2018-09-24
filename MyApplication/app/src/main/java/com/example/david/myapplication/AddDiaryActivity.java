@@ -368,7 +368,7 @@ public class AddDiaryActivity extends AppCompatActivity {
             startActivityForResult(intent, IMAGE_RESULT_CODE);
         }
     }
-
+ //ehejfeje
 
     //從圖庫拿圖
     public void click2(View v) {
