@@ -1,18 +1,23 @@
 package com.example.david.myapplication;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +71,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import static android.app.PendingIntent.getActivity;
+
 /**
  * Created by 李 on 2017/1/26.
  */
@@ -75,6 +82,7 @@ public class AddDiaryActivity extends AppCompatActivity {
     int right1 = 0;
     int top1 = 0;
     int bot1 = 0;
+    private final int MY_PERMISSIONS_CAMERA = 3;
     String addbmp = "";
     private final int IMAGE_RESULT_CODE = 1;
     private final int PICK_IMAGE = 2;
@@ -327,9 +335,40 @@ public class AddDiaryActivity extends AppCompatActivity {
 
     //拍照
     public void click1(View v) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, IMAGE_RESULT_CODE);
+        if (ContextCompat.checkSelfPermission(AddDiaryActivity.this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(AddDiaryActivity.this,
+                    Manifest.permission.CAMERA)) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, IMAGE_RESULT_CODE);
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(AddDiaryActivity.this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+
+            }
+
+
+        } else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, IMAGE_RESULT_CODE);
+        }
     }
+
 
     //從圖庫拿圖
     public void click2(View v) {
@@ -356,8 +395,8 @@ public class AddDiaryActivity extends AppCompatActivity {
                     img.setImageBitmap(bitmap);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                    int options = 500;
-                    while (baos.toByteArray().length / 1024 > 500) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                    int options = 100;
+                    while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                         baos.reset();//重置baos即清空baos
                         bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                         options -= 10;//每次都减少10
@@ -378,7 +417,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap_gal.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         int options = 100;
-                        while (baos.toByteArray().length / 102400 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
                             baos.reset();//重置baos即清空baos
                             bitmap_gal.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
                             options -= 10;//每次都减少10
@@ -420,6 +459,31 @@ public class AddDiaryActivity extends AppCompatActivity {
         public long getId() {
             return this.id = id;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestcode, String[] permissions, int[] grantResults) {
+//        if(requestcode==MY_PERMISSIONS_CAMERA){return;}
+        switch (requestcode) {
+            case MY_PERMISSIONS_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, IMAGE_RESULT_CODE);
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
+        super.onRequestPermissionsResult(requestcode, permissions, grantResults);
     }
 
 

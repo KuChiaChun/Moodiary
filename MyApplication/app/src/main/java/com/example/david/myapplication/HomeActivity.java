@@ -128,6 +128,7 @@ public class HomeActivity extends BaseActivity {
     public void AddtoList(View v) {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         userlistReference = mFirebaseDatabaseReference.child("exchange").child(dateSystem).child(User.CHILD_NAME);
+        mFirebaseDatabaseReference.child("exchange").child(ExchangeDiary.getSpecifiedDayBefore(dateSystem, 0)).child("end").setValue(false);
         userReference = mFirebaseDatabaseReference.child("users").child(mFirebaseUser.getUid());
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -157,9 +158,9 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
-        if (userReference.toString().equals("false")) {
-            userlistReference.child(mFirebaseUser.getUid()).setValue(userReference);
-        }
+//        if (userReference.toString().equals("false")) {
+//            userlistReference.child(mFirebaseUser.getUid()).setValue(userReference);
+//        }
     }
 
 
