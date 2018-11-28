@@ -1,9 +1,11 @@
 package com.example.david.myapplication;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,35 +57,46 @@ public class ExchangeDiary extends BaseActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 list.clear();
-                if (dataSnapshot.child("end").getValue().equals(false)) {
-                    for (DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
-                        list.add(ds.getValue().toString());
-                    }
-
-                    if (!list.isEmpty()) {
-                        Collections.shuffle(list);
-                        int count = 1;
-                        String user1 = null, user2 = null;
-                        for (String i : list) {
-                            if (count % 2 != 0) {
-                                user1 = i;
-                            } else {
-                                user2 = i;
-                                userlistReference.child("users").child((user1)).setValue(user2);
-                                userlistReference.child("users").child((user2)).setValue(user1);
-                            }
-                            count++;
+                if (!(dataSnapshot.child("end").getValue() == null)) {
+                    if (dataSnapshot.child("end").getValue().equals(false)) {
+                        for (DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
+                            list.add(ds.getValue().toString());
                         }
-                        userlistReference.child("end").setValue(true);
-                    }
 
+                        if (!list.isEmpty()) {
+                            Collections.shuffle(list);
+                            int count = 1;
+                            String user1 = null, user2 = null;
+                            for (String i : list) {
+                                if (count % 2 != 0) {
+                                    user1 = i;
+                                } else {
+                                    user2 = i;
+                                    userlistReference.child("users").child((user1)).setValue(user2);
+                                    userlistReference.child("users").child((user2)).setValue(user1);
+                                }
+                                count++;
+                            }
+                            userlistReference.child("end").setValue(true);
+                        }
+
+                    }
                 }
                 exchangeReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        friend = dataSnapshot.child("users").child(mFirebaseUser.getUid()).getValue().toString();
-                        diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(friend).child("diary").child(getSpecifiedDayBefore(dateSystem, 1));
-                        initView();
+                        if (dataSnapshot.child("users").child(mFirebaseUser.getUid()).getValue() != null) {
+                            friend = dataSnapshot.child("users").child(mFirebaseUser.getUid()).getValue().toString();
+                            diaryReference = mFirebaseDatabaseReference.child(User.CHILD_NAME).child(friend).child("diary").child(getSpecifiedDayBefore(dateSystem, 1));
+                            initView();
+                        } else {
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ExchangeDiary.this);
+                            alertDialogBuilder.setMessage("昨天沒有上傳日記，並未配對").setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            }).show();
+                        }
                     }
 
                     @Override
@@ -131,8 +144,9 @@ public class ExchangeDiary extends BaseActivity {
                 }
                 if (count >= 3) {
                     mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("qualified").setValue(true);
-                } else
-                    mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("qualified").setValue(false);
+                }
+//                else
+//                    mFirebaseDatabaseReference.child(User.CHILD_NAME).child(mFirebaseUser.getUid()).child("qualified").setValue(false);
             }
 
             @Override

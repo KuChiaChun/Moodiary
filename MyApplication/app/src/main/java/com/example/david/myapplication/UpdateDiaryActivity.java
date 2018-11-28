@@ -38,7 +38,7 @@ import cc.trity.floatingactionbutton.FloatingActionsMenu;
  */
 
 public class UpdateDiaryActivity extends AppCompatActivity {
-    String moodtext="開心";
+    String moodtext = "開心";
     @BindView(R.id.update_diary_tv_date)
     TextView mUpdateDiaryTvDate;
     @BindView(R.id.update_diary_et_title)
@@ -65,12 +65,12 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     TextView mTvTag;
     @BindView(R.id.imageView2)
     ImageView img2;
-    String updatebmp1="";
+    String updatebmp1 = "";
 
 
     private DiaryDatabaseHelper mHelper;
 
-    public static void startActivity(Context context, String title, String mood, String content, String tag, int left1, int top1, int right1, int bot1,String bmp1) {
+    public static void startActivity(Context context, String title, String mood, String content, String tag, int left1, int top1, int right1, int bot1, String bmp1) {
         Intent intent = new Intent(context, UpdateDiaryActivity.class);
         intent.putExtra("title", title);
         intent.putExtra("mood", mood);
@@ -89,32 +89,30 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_diary);
         Timer timer = new Timer();
-        timer.schedule(new TimerTask()
-                       {
+        timer.schedule(new TimerTask() {
 
-                           public void run()
-                           {
+                           public void run() {
                                InputMethodManager inputManager =
-                                       (InputMethodManager)mUpdateDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                       (InputMethodManager) mUpdateDiaryEtTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                                inputManager.showSoftInput(mUpdateDiaryEtTitle, 0);
                            }
 
                        },
                 998);
         //心情
-        Spinner spinner = (Spinner)findViewById(R.id.mood_spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.mood_spinner);
         final String[] lunch = {"開心", "平靜", "難過", "憤怒", "失望"};
-        ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,lunch);
+        ArrayAdapter<String> lunchList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, lunch);
         spinner.setAdapter(lunchList);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                moodtext=lunch[i];
-        }
+                moodtext = lunch[i];
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                moodtext=lunch[1];
+                moodtext = lunch[1];
             }
         });
         //
@@ -127,7 +125,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mUpdateDiaryTvDate.setText("今天，" + GetDate.getDate());
         mUpdateDiaryEtTitle.setText(intent.getStringExtra("title"));
-        img2.layout(321,21,3232,323);
+        img2.layout(321, 21, 3232, 323);
         mUpdateDiaryEtContent.setText(intent.getStringExtra("content"));
         mTvTag.setText(intent.getStringExtra("tag"));
         //載入圖片
@@ -136,7 +134,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         byte bytes[] = Base64.decode(updatebmp1.getBytes(), Base64.DEFAULT);
         img2.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
         //位置
-        img2.layout(intent.getIntExtra("left1",0), intent.getIntExtra("top1",0),intent.getIntExtra("right1",0),intent.getIntExtra("bot1",0));
+        img2.layout(intent.getIntExtra("left1", 0), intent.getIntExtra("top1", 0), intent.getIntExtra("right1", 0), intent.getIntExtra("bot1", 0));
 
     }
 
@@ -151,7 +149,8 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.common_iv_back:
-                diary_MainActivity.startActivity(this);
+                finish();
+                break;
             case R.id.update_diary_tv_date:
                 break;
             case R.id.update_diary_et_title:
@@ -167,7 +166,8 @@ public class UpdateDiaryActivity extends AppCompatActivity {
                         String tag = mTvTag.getText().toString();
                         SQLiteDatabase dbDelete = mHelper.getWritableDatabase();
                         dbDelete.delete("Diary", "tag = ?", new String[]{tag});
-                        diary_MainActivity.startActivity(UpdateDiaryActivity.this);
+//                        diary_MainActivity.startActivity(UpdateDiaryActivity.this);
+                        finish();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -186,16 +186,17 @@ public class UpdateDiaryActivity extends AppCompatActivity {
                 valuesUpdate.put("content", content);
                 valuesUpdate.put("bmp1", bmp1);
                 dbUpdate.update("Diary", valuesUpdate, "title = ?", new String[]{title});
-              //  dbUpdate.update("Diary", valuesUpdate, "mood=?", new String[]{mood});
+                //  dbUpdate.update("Diary", valuesUpdate, "mood=?", new String[]{mood});
                 dbUpdate.update("Diary", valuesUpdate, "content = ?", new String[]{content});
-             //   dbUpdate.update("Diary", valuesUpdate, "bmp1 = ?", new String[]{bmp1});
+                //   dbUpdate.update("Diary", valuesUpdate, "bmp1 = ?", new String[]{bmp1});
                 valuesUpdate.clear();
                 dbUpdate.close();
-                diary_MainActivity.startActivity(this);
+//                diary_MainActivity.startActivity(this);
+                finish();
                 break;
             case R.id.update_diary_fab_delete:
-                diary_MainActivity.startActivity(this);
-
+//                diary_MainActivity.startActivity(this);
+                finish();
                 break;
         }
     }
@@ -203,13 +204,14 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     @OnClick(R.id.common_tv_title)
     public void onClick() {
         Intent intent = getIntent();
-        img2.layout(intent.getIntExtra("left1",0), intent.getIntExtra("top1",0),intent.getIntExtra("right1",0),intent.getIntExtra("bot1",0));
+        img2.layout(intent.getIntExtra("left1", 0), intent.getIntExtra("top1", 0), intent.getIntExtra("right1", 0), intent.getIntExtra("bot1", 0));
 
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        diary_MainActivity.startActivity(this);
+//        diary_MainActivity.startActivity(this);
+        finish();
     }
 }

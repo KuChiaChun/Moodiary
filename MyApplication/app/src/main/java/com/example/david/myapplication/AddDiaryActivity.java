@@ -228,8 +228,9 @@ public class AddDiaryActivity extends AppCompatActivity {
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
+//                            finish();
 //                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+                            dialog.cancel();
                         }
                     }).show();
 
@@ -283,6 +284,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                     values.put("right1", right1);
                     values.put("bot1", bot1);
                     values.put("bmp1", bmp1);
+                    values.put("uploaded", "no");
 
                     db.insert("Diary", null, values);
 //                    diary_MainActivity.startActivity(this);
@@ -368,7 +370,7 @@ public class AddDiaryActivity extends AppCompatActivity {
             startActivityForResult(intent, IMAGE_RESULT_CODE);
         }
     }
- //ehejfeje
+    //ehejfeje
 
     //從圖庫拿圖
     public void click2(View v) {
@@ -432,13 +434,10 @@ public class AddDiaryActivity extends AppCompatActivity {
         }
     }
 
-
     public class diarydata {
-
         private String diary;
         private String date;
         private int id;
-
         public diarydata() {
         }
 
@@ -475,7 +474,6 @@ public class AddDiaryActivity extends AppCompatActivity {
                     // contacts-related task you need to do.
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -486,11 +484,9 @@ public class AddDiaryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestcode, permissions, grantResults);
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         diary_MainActivity.startActivity(this);
         finish();
     }
@@ -503,18 +499,6 @@ public class AddDiaryActivity extends AppCompatActivity {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage("確定不保存日記就退出?").setPositiveButton("確定", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-//                            SQLiteDatabase db = mHelper.getWritableDatabase();
-//                            ContentValues values = new ContentValues();
-//                            values.put("date", dateBack);
-//                            values.put("title", titleBack);
-//                            values.put("mood", moodBack);
-//                            values.put("content", contentBack);
-//                            values.put("bmp1", bmp1back);
-//                            db.insert("Diary", null, values);
-//                            values.clear();
-//                    Intent intent = new Intent();
-//                    intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
-//                    startActivity(intent);
                     finish();
 
                 }
@@ -522,13 +506,11 @@ public class AddDiaryActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
 //                            finish();
 //                            diary_MainActivity.startActivity(AddDiaryActivity.this);
+                    dialog.cancel();
                 }
             }).show();
 
         } else {
-//            Intent intent = new Intent();
-//            intent.setClass(AddDiaryActivity.this, diary_MainActivity.class);
-//            startActivity(intent);
             finish();
         }
         return true;

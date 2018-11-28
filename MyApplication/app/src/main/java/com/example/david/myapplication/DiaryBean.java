@@ -14,8 +14,9 @@ public class DiaryBean {
     private int  right1;
     private int  bot1;
     private String bmp1;
+    private String uploaded;
 
-    public DiaryBean(String date, String title,  String mood, String content, String tag,int left1,int top1,int right1,int bot1,String bmp1) {
+    public DiaryBean(String date, String title,  String mood, String content, String tag,int left1,int top1,int right1,int bot1,String bmp1,String uploaded) {
         this.date = date;
         this.title = title;
         this.content = content;
@@ -26,6 +27,7 @@ public class DiaryBean {
         this.right1 = right1;
         this.bot1 = bot1;
         this.bmp1 = bmp1;
+        this.uploaded = uploaded;
     }
     public String getTag() {
         return tag;
@@ -84,5 +86,13 @@ public class DiaryBean {
 
     public String getBmp1() {return bmp1;}
     public void setBmp1(String bmp1) {this.bmp1 = bmp1;}
+
+    public String getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(String uploaded) {
+        this.uploaded = uploaded;
+    }
 
 }

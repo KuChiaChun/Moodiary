@@ -3,6 +3,7 @@ package com.example.david.myapplication;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -38,7 +40,10 @@ import android.widget.TextView;
 //import com.lizehao.watermelondiarynew.utils.SpHelper;
 //import com.lizehao.watermelondiarynew.utils.StatusBarCompat;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,6 +103,8 @@ public class diary_MainActivity extends BaseActivity {
     /**
      * 标识今天是否已经写了日记
      */
+    private DatabaseReference userlistReference, userReference;
+    private String dateSystem;
     private boolean isWrite = false;
     private static TextView mTvTest;
     private DatabaseReference diaryReference;
@@ -114,13 +121,15 @@ public class diary_MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("123", "createeeeeeee");
+        Log.v("", "create");
         setContentView(R.layout.activity_diary);
 //        AppManager.getAppManager().addActivity(this);
         getWindow().setBackgroundDrawableResource(R.drawable.background_5);
         ButterKnife.bind(this);
         StatusBarCompat.compat(this, Color.parseColor("#161414"));
         mHelper = new DiaryDatabaseHelper(this, "Diary.db", null, 1);
+        //清空DB
+//        mHelper.onUpgrade(mHelper.getWritableDatabase(),1,2);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         EventBus.getDefault().register(this);
@@ -147,6 +156,7 @@ public class diary_MainActivity extends BaseActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean uploadflag = false;
                 String userName = ANONYMOUS;
                 String photoUrl = null;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
@@ -179,16 +189,55 @@ public class diary_MainActivity extends BaseActivity {
                         String Today = sdf4.format(today);
                         String childdate = sdf4.format(datestring);
                         String title = cursor2.getString(cursor2.getColumnIndex("title"));
-//                        String date = cursor2.getString(cursor2.getColumnIndex("date"));
                         String content = cursor2.getString(cursor2.getColumnIndex("content"));
                         String mood = cursor2.getString(cursor2.getColumnIndex("mood"));
-                        if (childdate.equals(Today)) {
+                        String uploaded = cursor2.getString(cursor2.getColumnIndex("uploaded"));
+                        //將今日的日記上傳
+                        if (childdate.equals(Today) && uploaded.equals("no")) {
+                            uploadflag = true;
                             Diary diary = new Diary(content, mood, title, date, userName);
                             diaryReference.child(childdate).push().setValue(diary);
+                            SQLiteDatabase dbUpdate = mHelper.getWritableDatabase();
+                            ContentValues valuesUpdate = new ContentValues();
+                            valuesUpdate.put("title", title);
+                            valuesUpdate.put("mood", mood);
+                            valuesUpdate.put("content", content);
+                            valuesUpdate.put("uploaded", "yes");
+                            dbUpdate.update("Diary", valuesUpdate, "title = ?", new String[]{title});
+                            dbUpdate.update("Diary", valuesUpdate, "content = ?", new String[]{content});
+                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                            final Date datesys = new Date();
+                            final SimpleDateFormat sdfdate = new SimpleDateFormat("yyyy-MM-dd");
+                            dateSystem = sdfdate.format(datesys);
+                            userlistReference = mFirebaseDatabaseReference.child("exchange").child(dateSystem).child(User.CHILD_NAME);
+                            mFirebaseDatabaseReference.child("exchange").child(ExchangeDiary.getSpecifiedDayBefore(dateSystem, 0)).child("end").setValue(false);
+                            userReference = mFirebaseDatabaseReference.child("users").child(mFirebaseUser.getUid());
+                            userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.child("qualified").getValue().equals(true)) {
+                                        userlistReference.child(mFirebaseUser.getUid()).setValue(mFirebaseUser.getUid());
+                                    }
+                                    mFirebaseDatabaseReference.child("exchange").child(ExchangeDiary.getSpecifiedDayBefore(dateSystem, 0)).child("end").setValue(false);
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     } while (cursor2.moveToNext());
                 }
                 cursor2.close();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(diary_MainActivity.this);
+                alertDialogBuilder.setMessage(uploadflag ? "上傳成功" : "無日記可上傳").setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+
             }
         });
 //        upload.setOnTouchListener(new View.OnTouchListener() {
@@ -238,7 +287,8 @@ public class diary_MainActivity extends BaseActivity {
         mDiaryBeanList = new ArrayList<>();
         List<DiaryBean> diaryList = new ArrayList<>();
         sqLiteDatabase = mHelper.getWritableDatabase();
-
+        mMainLlMain.removeView(mItemFirst);
+        mItemFirst.setVisibility(View.GONE);
         Cursor cursor = sqLiteDatabase.query("Diary", null, null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -246,12 +296,8 @@ public class diary_MainActivity extends BaseActivity {
 //                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
-//                Date datestring = sdf.parse(date);
-//                date = sdf2.format(datestring);
                 Date datesys = new Date();
-
                 String dateSystem = sdf2.format(datesys);
-//                String dateSystem = GetDate.getDate().toString();
                 if (date.equals(dateSystem)) {
                     mMainLlMain.removeView(mItemFirst);
                     mItemFirst.setVisibility(View.GONE);
@@ -263,7 +309,6 @@ public class diary_MainActivity extends BaseActivity {
 
         if (cursor.moveToFirst()) {
             do {
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分ss秒");
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
                 String date = cursor.getString(cursor.getColumnIndex("date"));
 //                Date datestring = sdf.parse(date);
@@ -277,7 +322,8 @@ public class diary_MainActivity extends BaseActivity {
                 int right1 = cursor.getInt(cursor.getColumnIndex("right1"));
                 int bot1 = cursor.getInt(cursor.getColumnIndex("bot1"));
                 String bmp1 = cursor.getString(cursor.getColumnIndex("bmp1"));
-                mDiaryBeanList.add(new DiaryBean(date, title, mood, content, tag, left1, top1, right1, bot1, bmp1));
+                String uploaded = cursor.getString(cursor.getColumnIndex("uploaded"));
+                mDiaryBeanList.add(new DiaryBean(date, title, mood, content, tag, left1, top1, right1, bot1, bmp1, uploaded));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -319,9 +365,6 @@ public class diary_MainActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        Intent intent = new Intent();
-//        intent.setClass(diary_MainActivity.this, HomeActivity.class);
-//        startActivity(intent);
         finish();
         return true;
     }
