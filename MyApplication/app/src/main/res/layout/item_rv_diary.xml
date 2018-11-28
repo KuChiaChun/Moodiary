@@ -75,17 +75,18 @@
                     android:id="@+id/main_tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:background="#ffffff"
                     android:gravity="center_vertical"
-                    android:paddingLeft="16dp"
+                    android:paddingEnd="5dp"
+                    android:paddingLeft="8dp"
                     android:paddingTop="3dp"
-                    android:text="哈哈哈今天傻逼了"
+                    android:text="哈哈哈"
                     android:textColor="@color/black"
                     android:textSize="19sp" />
 
                 <TextView
                     android:id="@+id/main_tv_mood"
                     android:layout_width="wrap_content"
+                    android:paddingLeft="10dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="TextView" />
@@ -93,19 +94,21 @@
 
 
             <TextView
-                android:paddingTop="2dp"
-
                 android:id="@+id/main_tv_content"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="4dp"
-                android:paddingLeft="33dp"
-                android:paddingRight="15dp"
-                android:text="         在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里 写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么在这里写些什么"
-                android:textColor="#1d1c1c"
-                android:textSize="16sp"
 
-                />
+                android:lineSpacingExtra="10sp"
+
+                android:paddingEnd="0dp"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:scrollbars="vertical"
+                android:text="寫日記"
+                android:textAlignment="textStart"
+                android:textColor="#1d1c1c"
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:id="@+id/item_rl_edit"

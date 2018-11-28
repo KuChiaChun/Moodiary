@@ -42,9 +42,9 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.DiaryViewHol
             holder.mIvCircle.setImageResource(R.drawable.circle_orange);
         }
         holder.mTvDate.setText(mDiaryBeanList.get(position).getDate());
-        holder.mTvTitle.setText(mDiaryBeanList.get(position).getTitle());
-        holder.mTvContent.setText("       " + mDiaryBeanList.get(position).getContent());
-        holder.mTvMood.setText("       " + mDiaryBeanList.get(position).getMood());
+        holder.mTvTitle.setText("Title : "+mDiaryBeanList.get(position).getTitle());
+        holder.mTvContent.setText(mDiaryBeanList.get(position).getContent());
+        holder.mTvMood.setText("\t心情 : " + mDiaryBeanList.get(position).getMood());
         holder.mIvEdit.setVisibility(View.INVISIBLE);
         if(mEditPosition == position){
             holder.mIvEdit.setVisibility(View.VISIBLE);

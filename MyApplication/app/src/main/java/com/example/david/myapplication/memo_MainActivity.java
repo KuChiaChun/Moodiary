@@ -46,6 +46,7 @@ public class memo_MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LitePalApplication.initialize(this);
+//        DataSupport.deleteAll(Memo.class);
 //        setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawableResource(R.drawable.background_2);
         setContentView(R.layout.activity_memo);
